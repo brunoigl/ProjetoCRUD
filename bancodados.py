@@ -1,16 +1,11 @@
 import firebirdsql as fdb
 
 
-def solicitar_caminho_banco_dados():
-    caminho = input("Digite o caminho do banco de dados Firebird: ")
-    return caminho
-
-
 def conectar_no_banco():
     try:
         conn = fdb.connect(
             host='localhost',
-            database=r'C:\Infopoint\InfoPoint ERP-147\BaseDados\Carloni\INFOPOINTERP.FDB',
+            database=r'D:\ProjetosPython\ProjetoCRUD\VALHALLA.FDB',
             port=3050,
             user='SYSDBA',
             password='info0710'
@@ -22,18 +17,34 @@ def conectar_no_banco():
         print('\nConexão realizada com sucesso!\n')
         return conn
 
+# Consulta
 
-# Consultas
 
-def ler_condicoespgto(conn):
+def ler_cadastros(conn):
     try:
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM CAD_CONDPAGTMO P ORDER BY P.CPAG_ID")
+        cursor.execute("SELECT * FROM CLIENTE C ORDER BY C.CLI_ID")
         registros = cursor.fetchall()
         return registros
     except fdb.Error as erro:
-        print("Erro ao ler os registros:", erro)
+        print(f"Erro ao ler os registros: {erro}")
         return []
+
+
+def recebe_dados():
+    nome = str(input("Digite o nome: "))
+    cpf = str(input("Digite o CPF: "))
+    telefone = str(input("Digite o telefone: "))
+    return nome, cpf, telefone
+
+
+def cadastrar(conn, cli_nome, cli_cpf, cli_telefone):
+    try:
+        cursor = conn.cursor()
+        cursor.execute(f"insert into cliente (cli_nome, cli_cpf, cli_telefone) values ('{cli_nome}', '{cli_cpf}', '{cli_telefone}')")
+        conn.commit()
+    except fdb.Error as erro:
+        print(f"Erro ao inserir registros: {erro}")
 
 
 def fechar_conexao(conn):
